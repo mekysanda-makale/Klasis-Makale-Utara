@@ -1,5 +1,5 @@
 function doGet(e) {
-  // Navigasi halaman berdasarkan parameter URL ?page=
+  // Navigasi halaman berdasarkan parameter URL ?page=dashboard
   if (e.parameter.page == 'dashboard') {
     return HtmlService.createHtmlOutputFromFile('dashboard')
         .setTitle('Dashboard Pengelola - Klasis Makale Utara')
@@ -12,7 +12,7 @@ function doGet(e) {
       .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
 }
 
-// Fungsi untuk mendapatkan URL Web App secara dinamis
+// Fungsi untuk mendapatkan URL Web App secara dinamis untuk login admin
 function getScriptUrl() {
   return ScriptApp.getService().getUrl();
 }
@@ -27,8 +27,8 @@ function processForm(payload) {
       return "Error: Sheet untuk Jemaat " + sheetName + " tidak ditemukan.";
     }
 
-    // --- LOGIKA PERBAIKAN KOLOM (D sampai M / 1 sampai 10) ---
-    // Cek baris 4 (Soal No. 1) untuk menentukan kolom responden mana yang kosong
+    // --- LOGIKA PENENTUAN KOLOM (D-M / Responden 1-10) ---
+    // Mencari kolom kosong berdasarkan baris ke-4 (Soal No. 1)
     let targetCol = -1;
     for (let col = 4; col <= 13; col++) {
       if (sheet.getRange(4, col).getValue() === "") {
@@ -37,25 +37,24 @@ function processForm(payload) {
       }
     }
 
-    // Jika targetCol tetap -1, berarti kolom D sampai M sudah penuh
     if (targetCol === -1) {
-      return "Maaf, kuota 10 responden untuk jemaat " + sheetName + " sudah penuh.";
+      return "Maaf, kuota 10 responden untuk jemaat ini sudah penuh.";
     }
 
-    // Beri label Responden di baris 2 jika kolom dipilih
+    // Beri label Responden di baris 2
     sheet.getRange(2, targetCol).setValue("Responden " + (targetCol - 3));
 
     // Masukkan jawaban ke baris yang sesuai (ID Pertanyaan + 3)
     payload.answers.forEach(item => {
       if (item.id) {
-        const row = parseInt(item.id) + 3; // Menyesuaikan dengan baris soal di Spreadsheet
+        const row = parseInt(item.id) + 3; // Soal 1 ada di baris 4
         
-        // Simpan jawaban pilihan (a/b/c/d) ke kolom responden
+        // Simpan jawaban pilihan (a/b/c)
         if (item.ans) {
           sheet.getRange(row, targetCol).setValue(item.ans);
         }
         
-        // Simpan jawaban tambahan ke kolom C (indeks 3) jika ada
+        // Simpan jawaban tambahan di kolom C (index 3) jika ada
         if (item.extra) {
           sheet.getRange(row, 3).setValue(item.extra);
         }
