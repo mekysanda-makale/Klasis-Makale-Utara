@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <style>
+    :root { --p: #1b5e20; --s: #fbc02d; }
+    body { margin: 0; font-family: sans-serif; background: linear-gradient(135deg, var(--p), var(--s)); height: 100vh; display: flex; align-items: center; justify-content: center; }
+    .card { background: white; padding: 40px; border-radius: 20px; text-align: center; width: 350px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+    .btn { display: block; width: 100%; padding: 15px; margin: 10px 0; border-radius: 10px; border: none; font-weight: bold; cursor: pointer; }
+    input { width: 90%; padding: 10px; margin-bottom: 5px; border: 1px solid #ddd; border-radius: 5px; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <img src="https://upload.wikimedia.org/wikipedia/id/8/82/Logo_Gereja_Toraja.png" width="80">
+    <h2>Klasis Makale Utara</h2>
+    <button class="btn" style="background:var(--p); color:white" onclick="nav('survey')">MULAI SURVEY</button>
+    <div style="margin-top:20px; border-top:1px solid #eee; padding-top:15px;">
+      <small>Admin Only</small>
+      <input type="text" id="u" placeholder="User">
+      <input type="password" id="p" placeholder="Pass">
+      <button class="btn" onclick="login()">LOGIN DASHBOARD</button>
+    </div>
+  </div>
+  <script>
+    function nav(p) { google.script.run.withSuccessHandler(url => window.location.href = url + "?page=" + p).getScriptUrl(); }
+    function login() {
+      if(document.getElementById('u').value === "admin" && document.getElementById('p').value === "klasis2025") nav('dashboard');
+      else alert("Salah!");
+    }
+  </script>
+</body>
+</html>
