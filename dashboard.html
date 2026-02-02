@@ -3,42 +3,34 @@
 <head>
   <base target="_top">
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard Admin - Klasis Makale Utara</title>
   <style>
     body { margin: 0; font-family: sans-serif; background: #f4f7f6; display: flex; }
-    .sidebar { width: 250px; background: #1b5e20; height: 100vh; color: white; padding: 20px; position: fixed; }
-    .content { margin-left: 290px; padding: 40px; flex: 1; }
-    .card-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 20px; }
-    .card { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); border-left: 5px solid #fbc02d; }
-    .btn-sheet { display: inline-block; background: #1b5e20; color: white; padding: 15px 25px; border-radius: 8px; text-decoration: none; margin-top: 30px; font-weight: bold; }
-    .btn-sheet:hover { background: #2e7d32; }
+    .side { width: 250px; background: #1b5e20; height: 100vh; color: white; padding: 20px; position: fixed; }
+    .main { margin-left: 280px; padding: 40px; flex: 1; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
+    .card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); border-left: 5px solid #fbc02d; }
+    .btn { display: inline-block; background: #1b5e20; color: white; padding: 15px 25px; border-radius: 8px; text-decoration: none; font-weight: bold; margin-top: 20px; }
   </style>
 </head>
 <body>
-<div class="sidebar">
-  <img src="https://upload.wikimedia.org/wikipedia/id/8/82/Logo_Gereja_Toraja.png" style="width: 50px; margin-bottom: 20px;">
-  <h2>Admin Panel</h2>
-  <hr style="opacity: 0.2">
-  <p>Dashboard Pengelola</p>
-  <p>Website Klasis Makale Utara</p>
+<div class="side">
+  <img src="https://upload.wikimedia.org/wikipedia/id/8/82/Logo_Gereja_Toraja.png" style="width: 60px; margin-bottom: 20px;">
+  <h2>Dashboard Admin</h2>
+  <hr style="opacity: 0.3">
+  <p>Klasis Makale Utara</p>
 </div>
-<div class="content">
-  <h1>Dashboard Pengelola</h1>
-  <p id="tgl"></p>
-  <div class="card-grid">
-    <div class="card"><h3>Total Jemaat</h3><p>17 Unit</p></div>
-    <div class="card"><h3>Kapasitas Responden</h3><p>10 Per Jemaat</p></div>
-    <div class="card"><h3>Sistem Survey</h3><p style="color: green">AKTIF</p></div>
+<div class="main">
+  <h1>Ringkasan Pengelola Website</h1>
+  <div class="grid">
+    <div class="card"><h3>Total Jemaat</h3><p>17 Jemaat</p></div>
+    <div class="card"><h3>Kapasitas</h3><p>10 Responden/Jemaat</p></div>
+    <div class="card"><h3>Status Survey</h3><p style="color: green">AKTIF</p></div>
   </div>
-  <div style="margin-top: 40px; background: white; padding: 30px; border-radius: 10px;">
-    <h3>Kontrol Data Mentah</h3>
-    <p>Klik tombol di bawah untuk melihat hasil jawaban responden di Google Sheets secara real-time.</p>
-    <a href="https://docs.google.com/spreadsheets/d/1u44mY-pzqtts2XcKwXoiwHoGR6Wrpmos4ayTz0cF24A/edit" target="_blank" class="btn-sheet">BUKA REKAP SURVEY (GOOGLE SHEETS)</a>
+  <div style="margin-top: 40px; background: white; padding: 30px; border-radius: 15px;">
+    <h2>Akses Data Real-Time</h2>
+    <p>Klik tombol di bawah untuk melihat rekapitulasi jawaban responden secara langsung di Google Sheets.</p>
+    <a href="https://docs.google.com/spreadsheets/d/1u44mY-pzqtts2XcKwXoiwHoGR6Wrpmos4ayTz0cF24A/edit" target="_blank" class="btn">BUKA GOOGLE SHEETS</a>
   </div>
 </div>
-<script>
-  document.getElementById('tgl').innerText = new Date().toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-</script>
 </body>
 </html>
