@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Survey Potensi Klasis Makale Utara</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    :root {
+      --primary-color: #1b5e20;
+      --secondary-color: #fbc02d;
+    }
+    body { background-color: #f4f7f6; padding-top: 20px; padding-bottom: 50px; }
+    .survey-container { max-width: 800px; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); margin: auto; }
+    .header-survey { border-bottom: 3px solid var(--secondary-color); margin-bottom: 30px; padding-bottom: 10px; }
+    .question-block { margin-bottom: 25px; padding: 15px; border-radius: 10px; transition: background 0.3s; border: 1px solid #f0f0f0; }
+    .question-block:hover { background-color: #f9fdf9; }
+    .page { display: none; }
+    .page.active { display: block; animation: fadeIn 0.5s; }
+    .extra-field { display: none; margin-top: 15px; padding: 10px; background: #fffde7; border-left: 4px solid var(--secondary-color); border-radius: 5px; }
+    .btn-primary { background-color: var(--primary-color); border: none; }
+    .btn-primary:hover { background-color: #2e7d32; }
+    .btn-nav { min-width: 120px; }
+    #displayJemaat { font-weight: bold; color: var(--primary-color); }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="survey-container">
+    
+    <div class="header-survey d-flex align-items-center justify-content-between">
+      <div>
+        <h4 class="mb-0">Survey Potensi Jemaat</h4>
+        <p class="text-muted small mb-0">Klasis Makale Utara</p>
+      </div>
+      <img src="https://upload.wikimedia.org/wikipedia/id/8/82/Logo_Gereja_Toraja.png" height="50">
+    </div>
+
+    <div id="displayJemaat" class="mb-3 text-uppercase"></div>
+
+    <form id="surveyForm">
+      
+      <div id="page0" class="page active">
+        <div class="alert alert-info">Selamat datang! Mohon pilih asal jemaat Anda sebelum memulai survey.</div>
+        <div class="mb-4">
+          <label class="fw-bold mb-2">Asal Jemaat:</label>
+          <select id="asalJemaat" class="form-select form-select-lg">
+            <option value="">-- Pilih Jemaat --</option>
+            <option>Jemaat Pniel Siguntu</option>
+            <option>Jemaat Mareali</option>
+            <option>Jemaat Bungin</option>
+            <option>Jemaat Rantelemo</option>
+            <option>Jemaat Parampo</option>
+            <option>Jemaat Rante To'long Mandetek</option>
+            <option>Jemaat Golgota Lemo</option>
+            <option>Jemaat Silo Barani</option>
+            <option>Jemaat Kambiolangi Pa'gasingan</option>
+            <option>Jemaat Maranatha Luak</option>
+            <option>Jemaat Kalvari Patongloan</option>
+            <option>Jemaat Imanuel Mandetek</option>
+            <option>Jemaat Limbu</option>
+            <option>Jemaat Sion Kamele'</option>
+            <option>Jemaat Tongkonan Basse Rorre</option>
+            <option>Jemaat Patulak Tallu Bontongan</option>
+            <option>Jemaat C. K. Sipate</option>
+          </select>
+        </div>
+        <button type="button" class="btn btn-primary w-100 p-3 fw-bold" onclick="nextPage(1)">MULAI SURVEY SEKARANG</button>
+      </div>
+
+      <div id="questionsContainer"></div>
+
+      <div id="pageFinal" class="page text-center">
+        <h3 class="mb-4">Selesai!</h3>
+        <p>Semua pertanyaan telah dijawab. Klik tombol di bawah untuk mengirimkan data Anda ke panitia Klasis.</p>
+        <div class="d-flex justify-content-center gap-3">
+          <button type="button" class="btn btn-outline-secondary" onclick="prevPage()">Periksa Kembali</button>
+          <button type="button" id="btnSubmit" class="btn btn-success btn-lg px-5" onclick="kirimSurvey()">Kirim Jawaban</button>
+        </div>
+      </div>
+
+    </form>
+  </div>
+</div>
+
+<script>
+  // DATA PERTANYAAN (Gunakan data yang Anda berikan di prompt)
+  const qData = [
+     { id: 1, q: "Apakah anda mengetahui bahwa dalam merancang arah Gereja Toraja tahun 2021-2026 menggunakan pendekatan berbasis potensi (Appreciative Inquiry)?", type: "branch", opt: ["a. Ya", "b. Ragu-ragu", "c. Tidak"], branchOn: "c", branchQ: "Mengapa Anda tidak mengetahuinya?", branchOpt: ["Tidak ada sosialisasi/pembinaan oleh Badan Pekerja Sinode", "Tidak ada sosialisasi/pembinaan oleh Badan Pekerja Sinode Wilayah", "Tidak ada sosialisasi/pembinaan oleh Badan Pekerja Klasis", "Tidak ada sosialisasi/pembinaan oleh pendeta jemaat"] },
+     // ... (lanjutkan data qData Anda sampai id 99 di sini)
+     // Catatan: Pastikan semua data qData yang Anda tulis di atas dimasukkan ke sini
+  ];
+
+  // LOGIKA RENDER DAN NAVIGASI (Sesuai skrip yang Anda buat sebelumnya)
+  let currentPage = 0;
+  const qPerPage = 10;
+  const totalPages = Math.ceil(qData.length / qPerPage);
+
+  function renderQuestions() {
+    const container = document.getElementById('questionsContainer');
+    container.innerHTML = ""; 
+
+    for (let p = 1; p <= totalPages; p++) {
+      const pageDiv = document.createElement('div');
+      pageDiv.id = `page${p}`;
+      pageDiv.className = 'page';
+      const start = (p - 1) * qPerPage;
+      const end = Math.min(start + qPerPage, qData.length);
+      
+      let html = `<p class="text-muted small text-end">Halaman ${p} dari ${totalPages}</p>`;
+
+      for (let i = start; i < end; i++) {
+        const item = qData[i];
+        html += `<div class="question-block">
+                  <p class="fw-bold">${item.id}. ${item.q}</p>`;
+        
+        if (item.type === 'textOnly') {
+          html += `<input type="text" name="q${item.id}" class="form-control" placeholder="${item.placeholder || ''}">`;
+        } else {
+          item.opt.forEach((o, idx) => {
+            const code = String.fromCharCode(97 + idx);
+            html += `
+              <div class="form-check mb-2">
+                <input class="form-check-input" type="radio" name="q${item.id}" value="${o}" onclick="checkExtra(${item.id}, '${code}', '${item.branchOn || ''}')">
+                <label class="form-check-label">${o}</label>
+              </div>`;
+          });
+        }
+
+        if (item.type === 'branch') {
+          html += `
+            <div id="extra_${item.id}" class="extra-field">
+              <label class="small fw-bold">${item.branchQ}</label>
+              ${item.branchOpt.map((bo, bidx) => `
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" name="q${item.id}_ex" value="${bo}">
+                  <label class="form-check-label small">${bo}</label>
+                </div>`).join('')}
+            </div>`;
+        }
+
+        if (item.type === 'input') {
+          html += `<textarea name="q${item.id}_text" class="form-control mt-2" placeholder="Tuliskan keterangan/jawaban Anda di sini..."></textarea>`;
+        }
+        html += `</div>`;
+      }
+
+      html += `
+        <div class="d-flex justify-content-between mt-4">
+          <button type="button" class="btn btn-outline-secondary btn-nav" onclick="prevPage()">Kembali</button>
+          <button type="button" class="btn btn-primary btn-nav" onclick="nextPage(${p + 1})">Lanjutkan</button>
+        </div>`;
+      
+      pageDiv.innerHTML = html;
+      container.appendChild(pageDiv);
+    }
+  }
+
+  function checkExtra(id, val, target) {
+    const el = document.getElementById(`extra_${id}`);
+    if (el) el.style.display = (val === target) ? 'block' : 'none';
+  }
+
+  function nextPage(n) {
+    const jemaat = document.getElementById('asalJemaat').value;
+    if (currentPage === 0 && !jemaat) return alert("Pilih Jemaat Terlebih Dahulu!");
+    
+    document.getElementById('displayJemaat').innerText = "JEMAAT: " + jemaat;
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    
+    currentPage = n;
+    const targetId = (n > totalPages) ? 'pageFinal' : `page${n}`;
+    const targetEl = document.getElementById(targetId);
+    
+    if(targetEl) {
+      targetEl.classList.add('active');
+    }
+    window.scrollTo(0,0);
+  }
+
+  function prevPage() {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    currentPage--;
+    const targetId = (currentPage === 0) ? 'page0' : `page${currentPage}`;
+    document.getElementById(targetId).classList.add('active');
+    if (currentPage === 0) document.getElementById('displayJemaat').innerText = "";
+    window.scrollTo(0,0);
+  }
+
+  function kirimSurvey() {
+    const btn = document.getElementById('btnSubmit');
+    btn.disabled = true;
+    btn.innerText = "Mengirim...";
+    
+    const form = document.getElementById('surveyForm');
+    const fd = new FormData(form);
+    const payload = { 
+      asalJemaat: document.getElementById('asalJemaat').value, 
+      answers: [] 
+    };
+
+    qData.forEach(q => {
+      payload.answers.push({ 
+        id: q.id, 
+        ans: fd.get(`q${q.id}`), 
+        extra: fd.get(`q${q.id}_ex`), 
+        text: fd.get(`q${q.id}_text`) 
+      });
+    });
+
+    google.script.run
+      .withSuccessHandler(() => { 
+        alert("Berhasil! Jawaban Anda telah tersimpan."); 
+        location.reload(); 
+      })
+      .withFailureHandler((err) => { 
+        alert("Terjadi kesalahan: " + err); 
+        btn.disabled = false; 
+        btn.innerText = "Kirim Jawaban"; 
+      })
+      .processForm(payload);
+  }
+
+  window.onload = renderQuestions;
+</script>
+
+</body>
+</html>
